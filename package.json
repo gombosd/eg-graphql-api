@@ -1,0 +1,22 @@
+{
+  "name": "eg-graphql-api",
+  "version": "1.0.0",
+  "description": "This is an example API specialized for authentication and authorization",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gombosd/eg-graphql-api.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gombosd/eg-graphql-api/issues"
+  },
+  "homepage": "https://github.com/gombosd/eg-graphql-api#readme",
+  "dependencies": {
+    "graphql": "^0.11.3"
+  }
+}
