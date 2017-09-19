@@ -4,7 +4,8 @@
   "description": "This is an example API specialized for authentication and authorization",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,10 @@
   },
   "homepage": "https://github.com/gombosd/eg-graphql-api#readme",
   "dependencies": {
-    "graphql": "^0.11.3"
+    "express": "^4.15.4",
+    "express-graphql": "^0.6.11",
+    "graphql": "^0.11.3",
+    "jsonwebtoken": "^8.0.1",
+    "nodemon": "^1.12.1"
   }
 }
