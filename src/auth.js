@@ -3,14 +3,14 @@ const jwt = require('jsonwebtoken');
 const { db } = require('./db');
 const { User } = require('./schemas');
 
-const secret = 'fuckinHighClassSecret*'
+const secret = 'f*ckingHighclassSecret*'
 
 const getUser = ({ email }) => {
-    var user = db.users[email];
-    if (!user) {
-      throw new Error('no user exists with email ' + email);
-    }
-    return new User(email, user.pass, user.role);
+  var user = db.users[email];
+  if (!user) {
+    throw new Error('no user exists with email ' + email);
+  }
+  return new User(email, user.pass, user.role);
 }
 
 const auth = function(req, res) {
@@ -38,6 +38,7 @@ const verify = function(req, res, next, reqCert) {
 }
 
 module.exports = {
-    auth,
-    verify,
+  auth,
+  verify,
+  getUser,
 }

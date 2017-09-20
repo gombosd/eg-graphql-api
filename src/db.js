@@ -1,11 +1,11 @@
 const db = {
-    users: {
-        hurka: {
-            pass: "kolbasz",
-            role: 1,
-        }
-    },
-    messages: {},
+  users: {
+    root: {
+      pass: 'root',
+      role: 5,
+    }
+  },
+  messages: {},
 }
 
 module.exports = { db };

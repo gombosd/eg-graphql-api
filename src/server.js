@@ -5,13 +5,16 @@ const bodyParser = require('body-parser');
 const { schema } = require('./graphqlSchema');
 const { roles } = require('./enums');
 const { auth, verify } = require('./auth');
-const { nonAuthRoot, userRoot, adminRoot } = require('./rootes')
+const { nonAuthRoot, userRoot, adminRoot } = require('./rootes');
+const { addUser, makeAdmin } = require('./register');
 
 const app = express();
 app.use(bodyParser.json());
 
-// no authentication required
+// no authentication
 app.post('/login', auth);
+app.post('/signup', addUser);
+
 app.use('/graphql', graphqlHTTP({
   schema,
   rootValue: nonAuthRoot,
@@ -32,6 +35,7 @@ app.use('/graphqlUser', graphqlHTTP({
 app.use((req, res, next) => {
   verify(req,res,next,roles.ADMIN);
 });
+app.post('/makeAdmin', makeAdmin)
 app.use('/graphqlAdmin', graphqlHTTP({
   schema,
   rootValue: adminRoot,

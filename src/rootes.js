@@ -1,5 +1,6 @@
 const  { db }  = require('./db');
 const { User, Message } = require('./schemas');
+const { getUser } = require('./auth');
 
 const nonAuthRoot = {
   rollDice: function ({numDice, numSides}) {
@@ -18,14 +19,7 @@ const userRoot = {
     }
     return new Message(id, db.messages[id]);
   },
-  getUser: function ({ email }) {
-    var user = db.users[email];
-    console.log(user);
-    if (!user) {
-      throw new Error('no user exists with email ' + email);
-    }
-    return new User(email, user.pass, user.role);
-  },
+  getUser,
 };
 
 const adminRoot = {
