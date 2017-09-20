@@ -2,6 +2,7 @@ var express = require('express');
 var graphqlHTTP = require('express-graphql');
 var { buildSchema } = require('graphql');
 var jwt = require('jsonwebtoken');
+var bodyParser = require('body-parser')
 
 // Construct a schema, using GraphQL schema language
 var schema = buildSchema(`
@@ -18,6 +19,8 @@ var schema = buildSchema(`
 
   type Query {
     getMessage(id: ID!): Message
+    rollDice(numDice: Int!, numSides: Int): [Int]
+    getUser(email: String): User   
   }
 
   type Mutation {
@@ -26,8 +29,8 @@ var schema = buildSchema(`
   }
 
   type User {
-    id: ID!
     email: String
+    role: Int
     pass: String
   }
 
@@ -56,10 +59,12 @@ class User {
 }
 
 var app = express();
+app.use(bodyParser.json());
 var secret = 'fuckinHighClassSecret*'
 
 var auth = function(req, res) {
-  const user = root.getUser(req.body.email, req.body.pass);
+  console.log(req.body)
+  const user = adminRoot.getUser(req.body);
 
   if (user.pass !== req.body.pass) {
     throw new Error('wrong pass');      
@@ -83,9 +88,14 @@ var verify = function(req, res, next, reqCert) {
 
 // Maps username to content
 var fakeDatabase = {};
-var fakeUserDB = {};
+var fakeUserDB = {
+  hurka: {
+    pass: 'kecske',
+    role: 5,
+  }
+};
 
-var root = {
+var userRoot = {
   getMessage: function ({id}) {
     if (!fakeDatabase[id]) {
       throw new Error('no message exists with id ' + id);
@@ -106,13 +116,7 @@ var root = {
     fakeDatabase[id] = input;
     return new Message(id, input);
   },
-  getUser: function ({ email, pass }) {
-    var user = fakeUserDB[email].pass;
-    if (!user) {
-      throw new Error('no message exists with email ' + email);
-    }
-    return new User(email, pass, role);
-  },
+  
   // nyilvánvalóan szar reg
   addUser: function ({ email, pass }) {
     if (fakeUserDB[email]) {
@@ -130,6 +134,23 @@ var root = {
   },
 };
 
+var adminRoot = {
+  rollDice: function ({numDice, numSides}) {
+    var output = [];
+    for (var i = 0; i < numDice; i++) {
+      output.push(1 + Math.floor(Math.random() * (numSides || 6)));
+    }
+    return output;
+  },
+  getUser: function ({ email }) {
+    var user = fakeUserDB[email];
+    if (!user) {
+      throw new Error('no user exists with email ' + email);
+    }
+    return new User(email, user.pass, user.role);
+  },
+}
+
 
 app.post('/login', auth);
 
@@ -137,7 +158,7 @@ app.use((req, res, next) => {
   verify(req,res,next,1);
 });
 app.use('/graphqlUser', graphqlHTTP({
-  schema: userSchema,
+  schema,
   rootValue: userRoot,
   graphiql: true,
 }));
@@ -146,7 +167,7 @@ app.use((req, res, next) => {
   verify(req,res,next,2);
 });
 app.use('/graphqlAdmin', graphqlHTTP({
-  schema: adminSchema,
+  schema,
   rootValue: adminRoot,
   graphiql: true,
 }));
